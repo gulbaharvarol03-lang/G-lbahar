@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renk Analiz Protokolü - Ton Matrisi</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.05), transparent 60%);
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #60a5fa, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Ana ve Ara Renk Paleti (Alt Kısım) */
+        .palette-container {
+            margin-top: auto;
+            background: rgba(30, 41, 59, 0.8);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .palette-title {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .color-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .base-color-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .base-color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .base-color-btn.active {
+            border: 3px solid #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+            transform: scale(1.15);
+        }
+
+        /* Matrix Display (Orta Kısım) */
+        .matrix-container {
+            flex-grow: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 1.5rem;
+        }
+
+        .tone-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .tone-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .tone-swatch {
+            height: 80px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #fff;
+        }
+
+        .dark-text {
+            text-shadow: none;
+            color: #000;
+        }
+
+        .tone-info {
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            color: #cbd5e1;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .math-highlight {
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-back">← Geri</a>
+
+    <header>
+        <h1>Renk Ton Matrisi</h1>
+        <div class="subtitle">Seçilen rengin zıtlığından (Luminance) türetilen matematiksel tonları (L-Değeri)</div>
+    </header>
+
+    <div class="matrix-container" id="matrixContainer">
+        <!-- Javascript ile burası doldurulacak -->
+    </div>
+
+    <div class="palette-container">
+        <div class="palette-title">Ana ve Ara Renkleri Seçin</div>
+        <div class="color-selector" id="colorSelector">
+            <!-- Temel renk butonları JS ile eklenecek -->
+        </div>
+    </div>
+
+    <script>
+        // Ana ve Ara Renkler Tanımları Listesi (H = Hue, Saturation = 100, Light = 50 default olarak baz olacak)
+        const baseColors = [
+            { name: "Kırmızı (Ana)", h: 0, s: 100, l: 50 },
+            { name: "Turuncu (Ara)", h: 30, s: 100, l: 50 },
+            { name: "Sarı (Ana)", h: 60, s: 100, l: 50 },
+            { name: "Yeşil (Ara)", h: 120, s: 100, l: 50 },
+            { name: "Camgöbeği (Ara)", h: 180, s: 100, l: 50 },
+            { name: "Mavi (Ana)", h: 240, s: 100, l: 50 },
+            { name: "Mor (Ara)", h: 300, s: 100, l: 50 },
+            { name: "Pembe/Galibarda (Ara)", h: 330, s: 100, l: 50 },
+        ];
+
+        // HSL to RGB Dönüşümü Hesaplaması
+        function hslToRgb(h, s, l) {
+            h /= 360; s /= 100; l /= 100;
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l; 
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+        }
+
+        // RGB to HEX Dönüşümü
+        function rgbToHex(r, g, b) {
+            return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
+        }
+
+        const colorSelector = document.getElementById('colorSelector');
+        const matrixContainer = document.getElementById('matrixContainer');
+
+        // Paleti Oluştur
+        baseColors.forEach((color, index) => {
+            const rgb = hslToRgb(color.h, color.s, color.l);
+            const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+            
+            const btn = document.createElement('div');
+            btn.className = 'base-color-btn';
+            btn.style.backgroundColor = hex;
+            btn.title = color.name;
+            btn.onclick = () => renderMatrix(index, btn);
+            colorSelector.appendChild(btn);
+
+            // Başlangıçta ilk rengi seçili yap
+            if (index === 0) renderMatrix(0, btn);
+        });
+
+        // Seçilen Rengin Ton Matrisini Ekrana Çiz
+        function renderMatrix(colorIndex, activeBtn) {
+            // Aktif buton stilini güncelle
+            document.querySelectorAll('.base-color-btn').forEach(b => b.classList.remove('active'));
+            if(activeBtn) activeBtn.classList.add('active');
+            else colorSelector.firstChild.classList.add('active');
+
+            const base = baseColors[colorIndex];
+            
+            // L Değerleri: %10'dan %95'e kadar tonlar
+            const lValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95];
+            
+            let gridHtml = `<h2 style="margin-top:0; color:#cbd5e1;">Aktif Seçim: ${base.name} (H: ${base.h}°)</h2>`;
+            gridHtml += `<div class="matrix-grid">`;
+
+            lValues.forEach(l => {
+                const rgb = hslToRgb(base.h, base.s, l);
+                const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+                // Beyaz metin mi siyah metin mi daha okunur olur hesabı (Luma formülü)
+                const luma = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+                const textClass = luma > 160 ? 'dark-text' : '';
+
+                // HSL Matematiksel Açıklaması
+                let mathText = "";
+                if(l < 50) mathText = `L = %50 - %${50-l} (Daha Koyu)`;
+                else if (l > 50) mathText = `L = %50 + %${l-50} (Daha Açık)`;
+                else mathText = `L = %50 (Saf Ana/Ara Renk)`;
+
+                gridHtml += `
+                    <div class="tone-card">
+                        <div class="tone-swatch" style="background-color: ${hex}">
+                            <span class="${textClass}">${l}% Parlaklık</span>
+                        </div>
+                        <div class="tone-info">
+                            <div class="info-row">
+                                <span>Matematik:</span>
+                                <span class="math-highlight">${mathText}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>HSL:</span>
+                                <span>hsl(${base.h}, ${base.s}%, <span style="color:#fff">${l}%</span>)</span>
+                            </div>
+                            <div class="info-row">
+                                <span>RGB Formülü:</span>
+                                <span>rgb(${rgb.r}, ${rgb.g}, ${rgb.b})</span>
+                            </div>
+                            <div class="info-row">
+                                <span>HEX (16'lık):</span>
+                                <span style="color:${hex}">${hex}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            gridHtml += `</div>`;
+            matrixContainer.innerHTML = gridHtml;
+        }
+    </script>
+</body>
+</html>
